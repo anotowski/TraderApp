@@ -1,6 +1,6 @@
 # TraderApp
 Application made as a test assignment for recruting purpouses.
-Application consists of two parts connectors one is web API project used to retrieve and list data saved in blob and table storage. Second one is a azure function that gets data from external page via HTTP Client and saves the result of that action to the blob & table storage. Azure function is meant to be ran on Http timer trigger.
+Application consists of two primary adaptors one is web API project used to retrieve and list data saved in blob and table storage. Second primary adaptor driving is an azure function that gets data from external page via HTTP Client and saves the result of that action to the blob & table storage. Azure function is meant to be ran on Http timer trigger.
 ## Tech stack
 ### General
 - C# 11

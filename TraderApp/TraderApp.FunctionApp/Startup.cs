@@ -1,8 +1,8 @@
-using System;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TraderApp.FunctionApp.Helpers;
+using TraderApp.Application.Container;
+using TraderApp.Infrastructure.Container;
 
 [assembly: FunctionsStartup(typeof(TraderApp.FunctionApp.Startup))]
 
@@ -14,11 +14,9 @@ public class Startup : FunctionsStartup
     {
         var configuration = BuildConfiguration(builder.GetContext().ApplicationRootPath);
         builder.Services.Configure<IConfiguration>(configuration);
-        var tradeSiteApiBaseUrl = configuration["TradeSiteApiUrl"];
-        builder.Services.AddHttpClient(ConstValues.TraderFunctionAppHttpClientName, c =>
-        {
-            c.BaseAddress = new Uri(tradeSiteApiBaseUrl);
-        });
+        builder.Services.AddSingleton<IConfiguration>(configuration);
+        builder.Services.RegisterInfrastructure(configuration);
+        builder.Services.RegisterApplication();
 
         builder.Services.AddLogging();
     }

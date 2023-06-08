@@ -1,10 +1,11 @@
-using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TraderApp.Application.Commands;
+using TraderApp.Application.Commands.Handlers;
 
 namespace TraderApp.Controllers;
 
-// <summary>
+/// <summary>
 /// Controller that handles retrieval of stock data
 /// </summary>
 [AllowAnonymous]
@@ -13,6 +14,16 @@ namespace TraderApp.Controllers;
 [Produces("application/json")]
 public class StockController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
+    private readonly IUploadTradeSiteCommandHandler _uploadTradeSiteCommandHandler;
+
+    public StockController( IConfiguration configuration,
+        IUploadTradeSiteCommandHandler uploadTradeSiteCommandHandler)
+    {
+        _configuration = configuration;
+        _uploadTradeSiteCommandHandler = uploadTradeSiteCommandHandler;
+    }
+    
     /// <summary>
     /// Get list of stock data saved in given time period
     /// </summary>
@@ -26,5 +37,29 @@ public class StockController : ControllerBase
     public ActionResult Get([FromQuery] DateTime from, [FromQuery] DateTime to)
     {
         return Ok();
+    }
+
+
+    /// <summary>
+    /// Get detailed stock data for given id
+    /// </summary>
+    /// <param name="id">Unique ID of a stock</param>
+    /// <returns>Detailed information about stock</returns>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult Get([FromRoute] Guid id)
+    {
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Upload()
+    {
+        var siteUrl = _configuration["TradeSiteRedditEndpoint"];
+        var result = await _uploadTradeSiteCommandHandler.HandleAsync(new UploadTradeSiteCommand(){EndpointRoute = siteUrl}, HttpContext.RequestAborted);
+
+        return Ok(result);
     }
 }

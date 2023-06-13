@@ -6,7 +6,7 @@ Application consists of two primary adaptors one is web API project used to retr
 - C# 11
 - .Net framework 6.0
 ### Testing
-  - xunit
+  - nUnit
   - autofixture
   - nSubstitute
 

@@ -18,6 +18,7 @@ Project will use some of the tactical Domain Driven Design patterns but is not a
 ### Project structure
 
 ![img.png](img.png)
+
 Project consists of 4 main layers:
 - Primary adaptors: TraderApp.Api(number 2) & TraderApp.FunctionApp(number 5)
 - Application: TraderApp.Application(number 3) - this is the layer that is doing all validation work and communicates with infrastructure layer using domain entities and services.

@@ -1,6 +1,6 @@
 # TraderApp
 Application made as a test assignment for recruting purpouses.
-Application consists of two primary adaptors one is web API project used to retrieve and list data saved in blob and table storage. Second primary adaptor driving is an azure function that gets data from external page via HTTP Client and saves the result of that action to the blob & table storage. Azure function is meant to be ran on Http timer trigger.
+Application consists of two primary(driving) adaptors one is web API project used to retrieve and list data saved in blob and table storage. The second driving adaptoris an azure function that gets data from external page via HTTP Client and saves the result of that action to the blob & table storage. Azure function is meant to be ran on Http timer trigger.
 ## Tech stack
 ### General
 - C# 11
@@ -11,7 +11,7 @@ Application consists of two primary adaptors one is web API project used to retr
   - nSubstitute
 
 ## Architecture overview
-Project is fallowing basic principles of clean architecture ( also called onion layered or hexagonal architecture).
+Project is fallowing basic principles of clean architecture ( also called onion or hexagonal architecture).
 In order to spice things up project also implements CQS(Command Query Separation) pattern by authors own implementation.
 Project will use some of the tactical Domain Driven Design patterns but is not a fully DDD project. This is an architectual decission that was made and has reflection in the decission log.
 

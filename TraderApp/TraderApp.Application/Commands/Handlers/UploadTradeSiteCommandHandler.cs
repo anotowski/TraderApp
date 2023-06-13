@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using TraderApp.Domain.Models.StockDetails;
 using TraderApp.Domain.Models.StockLog;
 using TraderApp.Domain.Repositories;
 
@@ -19,26 +19,41 @@ public class UploadTradeSiteCommandHandler : IUploadTradeSiteCommandHandler
         _stockLogRepository = stockLogRepository;
         _stockDetailsRepository = stockDetailsRepository;
     }
-    
+
     public async Task<Guid> HandleAsync(UploadTradeSiteCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(command.EndpointRoute))
-        {
-            throw new InvalidEnumArgumentException(nameof(command.EndpointRoute));
-        }
-
+        var stockDetails = new List<StockDetails>();
         try
         {
-            var tradeSiteResult = await _tradeSiteRepository.GetAsync(command.EndpointRoute, cancellationToken);
-            var stockLog = new StockLog();
-            await _stockLogRepository.AddAsync(stockLog, cancellationToken);
-            return await _stockDetailsRepository.AddAsync(tradeSiteResult, cancellationToken);
+            stockDetails = (await _tradeSiteRepository.GetAsync(command.EndpointRoute, cancellationToken)).ToList();
         }
         catch (Exception e)
         {
-            var stockLog = new StockLog();
-            await _stockLogRepository.AddAsync(stockLog, cancellationToken);
+            var errorLog = new StockLog
+            {
+                AttemptDate = DateTime.UtcNow,
+                AttemptResult = AttemptResult.Failure,
+                EndpointName = command.EndpointRoute,
+                AttemptResultMessage = e.Message
+            };
+
+            await _stockLogRepository.AddAsync(errorLog, cancellationToken);
+
             throw;
         }
+
+        var id = await _stockDetailsRepository.AddAsync(stockDetails, cancellationToken);
+        var stockLog = new StockLog
+        {
+            Id = id,
+            AttemptDate = DateTime.UtcNow,
+            AttemptResult = AttemptResult.Success,
+            EndpointName = command.EndpointRoute,
+            AttemptResultMessage = "Success"
+        };
+
+        await _stockLogRepository.AddAsync(stockLog, cancellationToken);
+
+        return id;
     }
 }

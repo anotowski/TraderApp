@@ -4,6 +4,21 @@ namespace TraderApp.Application.Commands;
 
 public class UploadTradeSiteCommand : ICommand
 {
-    public Guid Id { get; set; }
-    public string EndpointRoute { get; init; }
+    private readonly string _endpointRoute;
+    
+    public Guid Id { get; init; }
+
+    public string EndpointRoute
+    {
+        get => _endpointRoute;
+        init
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException(nameof(EndpointRoute));
+            }
+
+            _endpointRoute = value;
+        }
+    }
 }

@@ -8,15 +8,22 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TraderApp.Domain\TraderApp.Domain.csproj" />
+      <ProjectReference Include="..\TraderApp.Shared\TraderApp.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Azure.Data.Tables" Version="12.8.0" />
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
+      <PackageReference Include="Microsoft.Extensions.Azure" Version="1.6.3" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+      <PackageReference Include="WindowsAzure.Storage" Version="9.3.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="AzureAdapters" />
+      <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
+        <HintPath>C:\Users\anotowski\.AzureToolsForIntelliJ\AzureFunctionsCoreTools\v4\4.40.0\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

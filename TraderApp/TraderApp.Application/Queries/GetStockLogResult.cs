@@ -1,6 +1,8 @@
-namespace TraderApp.Domain.Models.StockLog;
+using TraderApp.Domain.Models.StockLog;
 
-public class StockLog
+namespace TraderApp.Application.Queries;
+
+public class GetStockLogResult
 {
     public Guid? Id { get; init; }
     public string EndpointName { get; init; }

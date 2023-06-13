@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TraderApp.Application.Commands;
 using TraderApp.Application.Commands.Handlers;
+using TraderApp.Application.Queries;
+using TraderApp.Application.Queries.Handlers;
 
 namespace TraderApp.Controllers;
 
@@ -16,14 +18,26 @@ public class StockController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly IUploadTradeSiteCommandHandler _uploadTradeSiteCommandHandler;
+    private readonly IGetStockByIdQueryHandler _getStockByIdQueryHandler;
+    private readonly IGetStockLogQueryHandler _getStockLogQueryHandler;
 
-    public StockController( IConfiguration configuration,
-        IUploadTradeSiteCommandHandler uploadTradeSiteCommandHandler)
+    /// <summary>
+    /// Controller used for stock operations
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <param name="uploadTradeSiteCommandHandler"></param>
+    /// <param name="getStockByIdQueryHandler"></param>
+    public StockController(IConfiguration configuration,
+        IUploadTradeSiteCommandHandler uploadTradeSiteCommandHandler,
+        IGetStockByIdQueryHandler getStockByIdQueryHandler,
+        IGetStockLogQueryHandler getStockLogQueryHandler)
     {
         _configuration = configuration;
         _uploadTradeSiteCommandHandler = uploadTradeSiteCommandHandler;
+        _getStockByIdQueryHandler = getStockByIdQueryHandler;
+        _getStockLogQueryHandler = getStockLogQueryHandler;
     }
-    
+
     /// <summary>
     /// Get list of stock data saved in given time period
     /// </summary>
@@ -31,12 +45,15 @@ public class StockController : ControllerBase
     /// <param name="to">End date</param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetStockLogResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Get([FromQuery] DateTime from, [FromQuery] DateTime to)
+    public async Task<ActionResult<IEnumerable<GetStockLogResult>>> Get([FromQuery] GetStockLogQuery query)
     {
-        return Ok();
+        var result = await _getStockLogQueryHandler.HandleAsync(query,
+            HttpContext.RequestAborted);
+
+        return Ok(result);
     }
 
 
@@ -46,20 +63,32 @@ public class StockController : ControllerBase
     /// <param name="id">Unique ID of a stock</param>
     /// <returns>Detailed information about stock</returns>
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetStockByIdResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Get([FromRoute] Guid id)
+    public async Task<ActionResult<IEnumerable<GetStockByIdResult>>> GetById([FromRoute] Guid id)
     {
-        return Ok();
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> Upload()
-    {
-        var siteUrl = _configuration["TradeSiteRedditEndpoint"];
-        var result = await _uploadTradeSiteCommandHandler.HandleAsync(new UploadTradeSiteCommand(){EndpointRoute = siteUrl}, HttpContext.RequestAborted);
+        var result = await _getStockByIdQueryHandler.HandleAsync(
+            new GetStockByIdQuery() { Id = id },
+            HttpContext.RequestAborted);
 
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Gets stock data and saves result
+    /// </summary>
+    /// <returns>Guid of a new entity</returns>
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Guid>> Upload()
+    {
+        var siteUrl = _configuration["TradeSiteRedditEndpoint"];
+        var result =
+            await _uploadTradeSiteCommandHandler.HandleAsync(new UploadTradeSiteCommand() { EndpointRoute = siteUrl },
+                HttpContext.RequestAborted);
+
+        return CreatedAtAction(nameof(GetById), new { id = result }, new { Id = result });
     }
 }

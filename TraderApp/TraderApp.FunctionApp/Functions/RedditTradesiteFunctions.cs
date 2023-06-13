@@ -20,6 +20,7 @@ public class RedditTradeSiteFunctions
         _uploadTradeSiteCommandHandler = uploadTradeSiteCommandHandler;
         _configuration = configuration;
     }
+
     /// <summary>
     /// Function gets data from external site and uploads it to azure blob storage as well as logs information in table storage
     /// </summary>
@@ -31,7 +32,7 @@ public class RedditTradeSiteFunctions
         log.LogInformation(
             $"{nameof(RedditTradeSiteFunctions)} function upload redis trade site data started at: {DateTime.Now}");
         var configValue = _configuration["TradeSiteRedditEndpoint"];
-        await _uploadTradeSiteCommandHandler.HandleAsync(new UploadTradeSiteCommand(){EndpointRoute = configValue});
+        await _uploadTradeSiteCommandHandler.HandleAsync(new UploadTradeSiteCommand { EndpointRoute = configValue });
         log.LogInformation($"Upload redis trade site data finished at: {DateTime.Now}.");
     }
 }

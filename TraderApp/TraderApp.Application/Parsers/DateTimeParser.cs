@@ -8,6 +8,11 @@ public class DateTimeParser : IDateTimeParser
 
     public DateTime Parse(string date)
     {
+        if (string.IsNullOrWhiteSpace(date))
+        {
+            throw new ArgumentNullException(nameof(date));
+        }
+        
         if (!DateTime.TryParseExact(date, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None,
                 out var parsedDate))
         {

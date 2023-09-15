@@ -41,8 +41,7 @@ public class StockController : ControllerBase
     /// <summary>
     /// Get list of stock data saved in given time period
     /// </summary>
-    /// <param name="from">Starting date</param>
-    /// <param name="to">End date</param>
+    /// <param name="query">From and To query</param>
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetStockLogResult>))]
@@ -55,7 +54,6 @@ public class StockController : ControllerBase
 
         return Ok(result);
     }
-
 
     /// <summary>
     /// Get detailed stock data for given id

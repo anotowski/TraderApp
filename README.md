@@ -30,6 +30,9 @@ The project consists of 4 main layers:
 
 ### How to run locally
 Create emulated azure environment using azurite. To run azurite as docker container locally run these scripts:
-- docker pull mcr.microsoft.com/azure-storage/azurite
-- docker run --name "azurite" -p 10000:10000 -p 10001:10001 -p 10002:10002 -e ACCOUNT_NAME="devstoreaccount1" -v c:/azurite:/data mcr.microsoft.com/azure-storage/azurite
+```Shell
+docker pull mcr.microsoft.com/azure-storage/azurite
+
+docker run --name "azurite" -p 10000:10000 -p 10001:10001 -p 10002:10002 -e ACCOUNT_NAME="devstoreaccount1" -v c:/azurite:/data mcr.microsoft.com/azure-storage/azurite
+```
 Make sure you have correct table and blob storage account created with the name as in local.settings.json configuration (ContainerName and TableName)

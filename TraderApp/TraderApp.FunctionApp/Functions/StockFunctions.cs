@@ -44,7 +44,6 @@ namespace TraderApp.FunctionApp.Functions
             return new OkObjectResult(response);
         }
 
-
         [FunctionName("stock")]
         public async Task<IActionResult> GetStock(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "stock/{id:guid}")] HttpRequest request,
